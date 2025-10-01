@@ -64,19 +64,19 @@
                  <div class="collapse navbar-collapse" id="navMenu">
       <!-- Links (push left with me-auto) -->
       <ul class="navbar-nav mx-auto mb-3 gap 2">
-        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="favorites.html">Favorites</a></li>
-        <li class="nav-item"><a class="nav-link" href="add-movie.html">Add Movie</a></li>
+        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Favorites</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Add Movie</a></li>
       </ul>
 
       <!-- Buttons (aligned right) -->
       <div class="d-flex align-items-center gap-3">
-        <a href="../chucks/Pages/sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
-        <a href="../chucks/Pages/login.html">
+        <a href="./Sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
+        <a href="./Login.html">
           <button class="btn btn-danger rounded-pill fw-semibold px-4">Log in</button>
         </a>
-      </div>
-    </div>
+            </div>
+          </div>
             </div>
             </nav>
 
@@ -127,20 +127,91 @@
           </div>
 
           <button type="submit" class="btn btn-custom w-100 btn-danger text-light fw-bold">Sign Up</button>
+
+          <div class="d-flex justify-content-between mt-3">
+          <p style="font-style: oblique; font-size: 14px;">Do you have an account?</p><button class="btn btn-primary text-light fw-bold px-2"
+          style="font-size: 10px;" type="button">Login</button>
+          </div>
         </form>
       </div>
 
   <script>
-    const roleSelect = document.getElementById("roleSelect");
-    const adminCodeField = document.getElementById("adminCodeField");
 
-    roleSelect.addEventListener("change", () => {
-      if (roleSelect.value === "admin") {
-        adminCodeField.classList.remove("d-none");
-      } else {
-        adminCodeField.classList.add("d-none");
+  const roleSelect = document.getElementById("roleSelect");
+  const adminCodeField = document.getElementById("adminCodeField");
+  const signupForm = document.querySelector("form");
+
+  // Define a dedicated admin secret code
+  const ADMIN_SECRET_CODE = "696900"; // <-- you can change this
+
+  // Show admin field if role is admin
+  roleSelect.addEventListener("change", () => {
+    if (roleSelect.value === "admin") {
+      adminCodeField.classList.remove("d-none");
+    } else {
+      adminCodeField.classList.add("d-none");
+    }
+  });
+
+  // Handle form submit
+  signupForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const role = document.getElementById("roleSelect").value;
+    const adminCode = document.getElementById("adminCode").value.trim();
+
+    if (!name || !email || !password) {
+      alert("Please fill all required fields!");
+      return;
+    }
+
+    // Get existing users or init empty
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check if email already exists
+    if (users.some(user => user.email === email)) {
+      alert("User with this email already exists!");
+      return;
+    }
+
+    // Check for admin rules
+    if (role === "admin") {
+      const adminExists = users.some(user => user.role === "admin");
+
+      if (adminExists) {
+        alert("An admin account already exists. No more admin signups allowed.");
+        return;
       }
-    });
-  </script>
+
+      if (adminCode !== ADMIN_SECRET_CODE) {
+        alert("Invalid admin secret code!");
+        return;
+      }
+    }
+
+    // Create user object
+    const newUser = {
+      name,
+      email,
+      password,
+      role,
+      createdAt: new Date().toISOString()
+    };
+
+    // Save new user
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Signup successful! Please log in.");
+    window.location.href = "login.html"; // redirect to login
+  });
+
+  document.querySelector('button.btn.btn-primary').addEventListener('click', () => {
+  window.location.href = './Login.html';
+});
+</script>
 </body>
 </html>

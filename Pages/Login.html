@@ -69,15 +69,15 @@
     <div class="collapse navbar-collapse" id="navMenu">
       <!-- Centered links -->
       <ul class="navbar-nav mx-auto gap-3">
-        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="favorites.html">Favorites</a></li>
-        <li class="nav-item"><a class="nav-link" href="add-movie.html">Add Movie</a></li>
+        <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Favorites</a></li>
+        <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Add Movie</a></li>
       </ul>
 
       <!-- Buttons -->
       <div class="d-flex align-items-center gap-3">
-        <a href="../chucks/Pages/sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
-        <a href="../chucks/Pages/login.html">
+        <a href="./Sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
+        <a href="./Login.html">
           <button class="btn btn-danger rounded-pill fw-semibold px-4">Log in</button>
         </a>
       </div>
@@ -127,20 +127,68 @@
           </div>
 
           <button type="submit" class="btn btn-custom w-100 btn-danger text-light fw-bold">Login</button>
+
+          <div class="d-flex justify-content-between mt-3">
+          <p style="font-style: oblique; font-size: 14px;">Don't have an account?</p><button class="btn btn-primary text-light fw-bold px-2" style="font-size: 10px;"
+          type="button">Sign up</button>
+          </div>
         </form>
       </div>
-
+<img src="" alt="" srcset="">
   <script>
-    const roleSelect = document.getElementById("roleSelect");
-    const adminCodeField = document.getElementById("adminCodeField");
+  const roleSelect = document.getElementById("roleSelect");
+  const adminCodeField = document.getElementById("adminCodeField");
+  const loginForm = document.querySelector("form");
 
-    roleSelect.addEventListener("change", () => {
-      if (roleSelect.value === "admin") {
-        adminCodeField.classList.remove("d-none");
-      } else {
-        adminCodeField.classList.add("d-none");
-      }
-    });
-  </script>
+  // Admin secret code must match what you used in signup
+  const ADMIN_SECRET_CODE = "696900"; 
+
+  // Show/hide admin code
+  roleSelect.addEventListener("change", () => {
+    if (roleSelect.value === "admin") {
+      adminCodeField.classList.remove("d-none");
+    } else {
+      adminCodeField.classList.add("d-none");
+    }
+  });
+
+  loginForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const role = document.getElementById("roleSelect").value;
+  const adminCode = document.getElementById("adminCode").value.trim();
+
+  let users = JSON.parse(localStorage.getItem("users")) || [];
+
+  const user = users.find(u => u.email === email && u.password === password && u.role === role);
+
+  if (!user) {
+    alert("Invalid login credentials!");
+    return;
+  }
+
+  if (role === "admin" && adminCode !== ADMIN_SECRET_CODE) {
+    alert("Invalid admin secret code!");
+    return;
+  }
+
+  localStorage.setItem("activeUser", JSON.stringify(user));
+
+  if (role === "admin") {
+    window.location.href = "adminprofile.html";
+  } else {
+    window.location.href = "userprofile.html";
+  }
+});
+
+document.querySelector('button.btn.btn-primary').addEventListener('click', () => {
+  window.location.href = './Sign-up.html';
+});
+
+
+</script>
+
 </body>
 </html>

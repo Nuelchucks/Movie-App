@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Movie Fantasy</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
     body {
       background: #0d0d0d;
       color: #fff;
-     
     }
     .hero {
       padding: 80px 0;
@@ -21,125 +20,174 @@
       overflow: hidden;
     }
     .movie-card img {
-      height: 350px;
+      height: 250px; /* adjust height for modal */
       object-fit: cover;
     }
+    .movie-card {
+      background: rgba(0,0,0,0.65);
+      border-radius: 8px;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    }
+    .movie-card .card-body {
+      padding: 10px;
+    }
+    .movie-card h6 {
+      font-size: 1rem;
+      margin-bottom: 5px;
+    }
+    .movie-card p {
+      font-size: 0.85rem;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+    .favorite-icon {
+      color: #dc3545;
+      cursor: pointer;
+      font-size: 1.25rem;
+      margin-right: 10px;
+    }
+    .btn-more {
+      font-size: 0.9rem;
+      padding: 4px 12px;
+    }
   </style>
-    </head>
-    <body>
-            <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-  <div class="container">
-    <!-- Brand -->
-    <a class="navbar-brand" href="#">
-      <img src="./Asset/Images/slazzer-preview-8zfsj.png" 
-           width="100" height="70"
-           style="filter: brightness(0) invert(1);">
-    </a>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <!-- Brand -->
+      <a class="navbar-brand" href="./index.html">
+        <img src="./Asset/Images/slazzer-preview-8zfsj.png"    
+          width="100" height="70"
+          style="filter: brightness(0) invert(1);" />
+      </a>
 
-    <!-- Toggler -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" 
-            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <!-- Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" 
+              aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-    <!-- Navbar content -->
-    <div class="collapse navbar-collapse" id="navMenu">
-      <!-- Links (push left with me-auto) -->
-      <ul class="navbar-nav mx-auto mb-3 gap 2">
-        <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="favorites.html">Favorites</a></li>
-        <li class="nav-item"><a class="nav-link" href="add-movie.html">Add Movie</a></li>
-      </ul>
+      <!-- Navbar content -->
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav mx-auto mb-3 gap 2">
+          <li class="nav-item"><a class="nav-link" href="./index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Favorites</a></li>
+          <li class="nav-item"><a class="nav-link" href="./Pages/Login.html">Add Movie</a></li>
+        </ul>
 
-      <!-- Buttons (aligned right) -->
-      <div class="d-flex align-items-center gap-3">
-        <a href="./Pages/Sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
-        <a href="./Pages/Login.html">
-          <button class="btn btn-danger rounded-pill fw-semibold px-4">Log in</button>
-        </a>
+        <div class="d-flex align-items-center gap-3">
+          <a href="./Pages/Sign-up.html" class="text-decoration-none text-white fw-semibold">Sign up</a>
+          <a href="./Pages/Login.html">
+            <button class="btn btn-danger rounded-pill fw-semibold px-4">Log in</button>
+          </a>
+        </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
+  <section class="hero position-relative text-white vh-100 d-flex flex-column justify-content-center">
+    <video autoplay muted loop playsinline class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" style="z-index:-1;">
+      <source src="./Asset/Videos/mixkit-running-scared-down-a-hospital-hall-at-night-41764-hd-ready.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
 
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.6); z-index:-1;"></div>
 
- 
-            <section class="hero position-relative text-white vh-100 d-flex flex-column justify-content-center">
-            <video autoplay muted loop playsinline class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" style="z-index:-1;">
-                <source src="./Asset/Videos/mixkit-running-scared-down-a-hospital-hall-at-night-41764-hd-ready.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+    <!-- Hero Content -->
+    <div class="container text-center" style="margin-top: 3%;">
+      <h1 class="display-3 fw-bold" style="font-family: 'Great vibes', sans-serif;">
+        Fantasy <span class="fw-bold text-danger">2</span> <span class="text-light">Reality</span>
+      </h1>
+      <p class="lead">Search from thousands of movies and build your collection.</p>
+      <form id="searchForm" class="d-flex justify-content-center mt-4">
+        <input type="text" id="searchInput" class="form-control w-50 me-2" placeholder="Search movies..." />
+        <button type="submit" class="btn btn-danger">Search</button>
+      </form>
+    </div>
+  </section>
 
-            <!-- Dark overlay -->
-            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.6); z-index:-1;"></div>
-
-            <!-- Hero Content -->
-            <div class="container text-center" style="margin-top: 3%;">
-                <h1 class="display-3 fw-bold" style="font-family: 'Great vibes', sans-serif;">Fantasy <spa class="fw-bold text-danger">2</span> <span class="text-light">Reality</span></h1>
-                <p class="lead">Search from thousands of movies and build your collection.</p>
-                <form id="searchForm" class="d-flex justify-content-center mt-4">
-                <input type="text" id="searchInput" class="form-control w-50 me-2" placeholder="Search movies...">
-                <button type="submit" class="btn btn-danger">Search</button>
-                </form>
+  <!-- Modal to display search results -->
+  <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">Search Results</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row" id="resultsContainer">
+              <!-- Movie cards will go here -->
             </div>
-            </section>
-
-
- 
-<div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-centered">
-    <div class="modal-content bg-dark text-white">
-      <div class="modal-header">
-        <h5 class="modal-title">Search Results</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" id="resultsContainer">
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
-
- 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-   <script>
-            const searchForm = document.getElementById("searchForm");
-            const searchInput = document.getElementById("searchInput");
-            const resultsContainer = document.getElementById("resultsContainer");
-             const API_KEY = "b4b2c0dc";
 
-            searchForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const query = searchInput.value.trim();
-            if (!query) return;
+  <script>
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const resultsModal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    const API_KEY = "b4b2c0dc";
 
-       
-            const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
-            const data = await res.json();
+    searchForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      if (!query) return;
 
-            resultsContainer.innerHTML = "";
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${query}`);
+      const data = await res.json();
 
-            if (data.Search) {
-                data.Search.forEach(movie => {
-                resultsContainer.innerHTML += `
-                    <div class="d-flex align-items-center mb-3">
-                    <img src="${movie.Poster}" alt="${movie.Title}" class="me-3" style="width:60px; height:90px; object-fit:cover;">
-                    <div>
-                        <h6 class="mb-0">${movie.Title} (${movie.Year})</h6>
-                    </div>
-                    </div>
-                `;
-                });
-            } else {
-                resultsContainer.innerHTML = `<p>No results found</p>`;
-            }
+      resultsContainer.innerHTML = '';
 
-            
-            const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
-            modal.show();
-            });
-</script>
+      if (data.Search && data.Search.length > 0) {
+        data.Search.forEach((movie) => {
+          const posterUrl = movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/200x300?text=No+Image";
+          const cardHtml = `
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+              <div class="movie-card card">
+                <img src="${posterUrl}" alt="${movie.Title}" class="card-img-top" />
+                <div class="card-body d-flex flex-column">
+                  <h6 class="card-title">${movie.Title} (${movie.Year})</h6>
+                  <div class="mt-auto d-flex justify-content-between align-items-center">
+                    <span class="favorite-icon" role="button" title="Favorite ❤️">&#10084;</span>
+                    <button class="btn btn-outline-light btn-sm btn-more">More</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          resultsContainer.insertAdjacentHTML('beforeend', cardHtml);
+        });
+
+        // Add event listeners to all favorites and more buttons
+        resultsContainer.querySelectorAll('.favorite-icon').forEach(icon => {
+          icon.addEventListener('click', () => {
+            // Redirect to sign up for favorite action
+            window.location.href = './Pages/Sign-up.html';
+          });
+        });
+        resultsContainer.querySelectorAll('.btn-more').forEach(button => {
+          button.addEventListener('click', () => {
+            // Redirect to login for more details
+            window.location.href = './Pages/Login.html';
+          });
+        });
+
+      } else {
+        resultsContainer.innerHTML = '<p class="text-center">No results found</p>';
+      }
+
+      // Show the modal with results
+      resultsModal.show();
+    });
+  </script>
 </body>
 </html>

@@ -67,7 +67,7 @@
 <body>
   <!-- Background Video -->
   <video autoplay muted loop class="bg-video">
-    <source src="../Asset/Videos/100387-video-720.mp4" type="video/mp4">
+    <source src="../Asset/Videos/mixkit-burning-lava-particles-leaping-through-the-air-4426-hd-ready.mp4" type="video/mp4">
   </video>
 
   <!-- Navbar -->
@@ -207,20 +207,32 @@
       window.location.href = "login.html";
     });
 
-    const apiKey = "b4b2c0dc"; 
+    // Keep the same API key you used
+    const apiKey = "b4b2c0dc";
     const searchBtn = document.getElementById("searchBtn");
     const searchInput = document.getElementById("searchInput");
     const moviesContainer = document.getElementById("moviesContainer");
+    const favoriteMoviesContainer = document.getElementById("favoriteMovies");
+    const favCountEl = document.getElementById("favCount");
+    const addedCountEl = document.getElementById("addedCount");
+    const recentCountEl = document.getElementById("recentCount");
 
     // Fetch movies from OMDb API
     async function fetchMovies(query) {
-      const url = `https://www.omdbapi.com/?apikey=${apiKey}&s=${query}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      return data.Search || [];
+      const url = `https://www.omdbapi.com/?apikey=${apiKey}&s=${encodeURIComponent(query)}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        // OMDb returns { Response: "False", Error: "Movie not found!" } on no results
+        if (data.Response === "False") return [];
+        return data.Search || [];
+      } catch (err) {
+        console.error("Fetch error:", err);
+        return [];
+      }
     }
 
-    // Render movies neatly in rows
+    // Render movies neatly in rows (search results)
     function renderMovies(movies) {
       moviesContainer.innerHTML = "";
       movies.forEach(movie => {
@@ -259,37 +271,91 @@
       });
     }
 
-    // Save favorites to localStorage
+    // Render favorites in Favorites tab
+    function renderFavorites() {
+      const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      favoriteMoviesContainer.innerHTML = "";
+
+      favorites.forEach(movie => {
+        const col = document.createElement("div");
+        col.className = "col-md-4 col-lg-3";
+
+        col.innerHTML = `
+          <div class="card shadow-sm movie-card">
+            <img src="${movie.Poster !== "N/A" ? movie.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" 
+                 class="card-img-top movie-poster" alt="${movie.Title}">
+            <div class="card-body text-center">
+              <h6 class="card-title">${movie.Title}</h6>
+              <p class="text-muted">${movie.Year}</p>
+              <button class="btn btn-sm btn-outline-danger remove-fav-btn" data-id="${movie.imdbID}">🗑 Remove</button>
+            </div>
+          </div>
+        `;
+
+        favoriteMoviesContainer.appendChild(col);
+      });
+
+      // Update favorite count UI
+      favCountEl.textContent = favorites.length;
+
+      // Attach remove handlers
+      document.querySelectorAll(".remove-fav-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-id");
+          removeFavorite(id);
+        });
+      });
+    }
+
+    // Save favorites to localStorage and update UI
     function saveFavorite(movie) {
       let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
       if (!favorites.some(fav => fav.imdbID === movie.imdbID)) {
         favorites.push(movie);
         localStorage.setItem("favorites", JSON.stringify(favorites));
+        renderFavorites(); // update the Favorites tab immediately
         alert(`${movie.Title} added to Favorites!`);
       } else {
         alert(`${movie.Title} is already in Favorites!`);
       }
     }
 
+    // Remove favorite by imdbID
+    function removeFavorite(id) {
+      let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+      favorites = favorites.filter(fav => fav.imdbID !== id);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      renderFavorites();
+    }
+
     // Show movie details in modal
     async function showMovieDetails(imdbID) {
       const url = `https://www.omdbapi.com/?apikey=${apiKey}&i=${imdbID}&plot=full`;
-      const response = await fetch(url);
-      const data = await response.json();
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (data.Response === "False") {
+          alert("Details not found.");
+          return;
+        }
 
-      // Populate modal
-      document.getElementById("movieTitleModal").textContent = data.Title;
-      document.getElementById("moviePosterModal").src = data.Poster !== "N/A" ? data.Poster : 'https://via.placeholder.com/300x450?text=No+Image';
-      document.getElementById("movieYear").textContent = data.Year;
-      document.getElementById("movieGenre").textContent = data.Genre;
-      document.getElementById("movieDirector").textContent = data.Director;
-      document.getElementById("movieActors").textContent = data.Actors;
-      document.getElementById("moviePlot").textContent = data.Plot;
-      document.getElementById("movieRating").textContent = data.imdbRating;
+        // Populate modal
+        document.getElementById("movieTitleModal").textContent = data.Title;
+        document.getElementById("moviePosterModal").src = data.Poster !== "N/A" ? data.Poster : 'https://via.placeholder.com/300x450?text=No+Image';
+        document.getElementById("movieYear").textContent = data.Year;
+        document.getElementById("movieGenre").textContent = data.Genre;
+        document.getElementById("movieDirector").textContent = data.Director;
+        document.getElementById("movieActors").textContent = data.Actors;
+        document.getElementById("moviePlot").textContent = data.Plot;
+        document.getElementById("movieRating").textContent = data.imdbRating;
 
-      // Show modal
-      const modal = new bootstrap.Modal(document.getElementById("movieDetailsModal"));
-      modal.show();
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById("movieDetailsModal"));
+        modal.show();
+      } catch (err) {
+        console.error("Details fetch error:", err);
+        alert("Failed to load details.");
+      }
     }
 
     // Search button click event
@@ -306,6 +372,11 @@
       if (e.key === "Enter") {
         searchBtn.click();
       }
+    });
+
+    // Render favorites on initial load
+    window.addEventListener("DOMContentLoaded", () => {
+      renderFavorites();
     });
   </script>
 </body>

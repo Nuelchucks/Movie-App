@@ -75,7 +75,7 @@
 <body>
   <!-- Background Video -->
   <video autoplay muted loop class="bg-video">
-    <source src="../Asset/Videos/100387-video-720.mp4" type="video/mp4">
+    <source src="../Asset/Videos/mixkit-burning-lava-particles-leaping-through-the-air-4426-hd-ready.mp4" type="video/mp4">
   </video>
 
   <!-- Navbar -->
@@ -154,15 +154,7 @@
               </tr>
             </thead>
             <tbody id="moviesTable">
-              <tr>
-                <td>1</td>
-                <td>Inception</td>
-                <td><img src="https://via.placeholder.com/60" class="rounded"></td>
-                <td>
-                  <button class="btn btn-sm btn-glass" data-bs-toggle="modal" data-bs-target="#editMovieModal">Edit</button>
-                  <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteMovieModal">Delete</button>
-                </td>
-              </tr>
+              <!-- dynamic -->
             </tbody>
           </table>
         </div>
@@ -183,16 +175,7 @@
               </tr>
             </thead>
             <tbody id="usersTable">
-              <tr>
-                <td>1</td>
-                <td>JohnDoe</td>
-                <td>john@example.com</td>
-                <td><span class="badge bg-success">Active</span></td>
-                <td>
-                  <button class="btn btn-sm btn-glass" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
-                  <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">Delete</button>
-                </td>
-              </tr>
+              <!-- dynamic -->
             </tbody>
           </table>
         </div>
@@ -219,6 +202,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+          <!-- Keep markup as-is (no ids) -->
           <input type="text" class="form-control mb-3" placeholder="Movie Title">
           <input type="text" class="form-control mb-3" placeholder="Poster URL">
           <textarea class="form-control" placeholder="Description"></textarea>
@@ -258,6 +242,7 @@
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
+          <!-- Keep markup as-is (no ids) -->
           <input type="text" class="form-control mb-3" placeholder="Username">
           <input type="email" class="form-control mb-3" placeholder="Email">
           <select class="form-select">
@@ -291,27 +276,192 @@
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
+  <!-- Bootstrap JS (keep as-is) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ===== ONLY SCRIPT CHANGES BELOW ===== -->
   <script>
-  // Load admin data
-  const admin = JSON.parse(localStorage.getItem("activeUser"));
-  if (admin) {
-    document.getElementById("adminName").textContent = `Welcome, ${admin.name}`;
-  }
+    // Seed demo data if not present (won't override existing data)
+    if (!localStorage.getItem("users")) {
+      localStorage.setItem("users", JSON.stringify([
+        { id: Date.now(), username: "JohnDoe", email: "john@example.com", status: "Active", activity: "Added Inception to favorites" }
+      ]));
+    }
+    if (!localStorage.getItem("movies")) {
+      localStorage.setItem("movies", JSON.stringify([
+        { id: Date.now(), title: "The Matrix", poster: "https://via.placeholder.com/60", desc: "What is real?" }
+      ]));
+    }
+    if (!localStorage.getItem("reports")) {
+      localStorage.setItem("reports", JSON.stringify([]));
+    }
+    if (!localStorage.getItem("sessions")) {
+      localStorage.setItem("sessions", JSON.stringify([]));
+    }
 
-  // Example counts
-  document.getElementById("userCount").textContent = 120;
-  document.getElementById("movieCount").textContent = 80;
-  document.getElementById("reportsCount").textContent = 15;
-  document.getElementById("activeSessions").textContent = 34;
+    // ADMIN NAME
+    const admin = JSON.parse(localStorage.getItem("activeUser"));
+    if (admin) {
+      document.getElementById("adminName").textContent = `Welcome, ${admin.name}`;
+    }
 
-  // Logout
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.removeItem("activeUser");
-    window.location.href = "login.html";
-  });
-</script>
+    // ----------- USERS -----------
+    function loadUsers() {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const usersTable = document.getElementById("usersTable");
+      usersTable.innerHTML = "";
 
+      users.forEach((user, i) => {
+        usersTable.innerHTML += `
+          <tr>
+            <td>${i+1}</td>
+            <td>${user.username || user.name || ""}</td>
+            <td>${user.email || ""}</td>
+            <td><span class="badge ${user.status === "Active" ? "bg-success" : "bg-secondary"}">${user.status || (user.isActive ? "Active" : "Suspended")}</span></td>
+            <td>
+              <button class="btn btn-sm btn-glass" onclick="openEditUser(${i})">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteUser(${i})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("userCount").textContent = users.length;
+    }
+
+    function openEditUser(index) {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users[index];
+      if (!user) return;
+
+      const modalEl = document.getElementById("editUserModal");
+      const usernameInput = modalEl.querySelector('input[type="text"]');
+      const emailInput = modalEl.querySelector('input[type="email"]');
+      const statusSelect = modalEl.querySelector('select');
+
+      usernameInput.value = user.username || user.name || "";
+      emailInput.value = user.email || "";
+      // set select value if matches
+      if (user.status) statusSelect.value = user.status;
+      else statusSelect.value = user.isActive ? "Active" : "Suspended";
+
+      // set save handler (overwrite any previous)
+      const saveBtn = modalEl.querySelector('.btn-glass');
+      saveBtn.onclick = function() {
+        user.username = usernameInput.value.trim();
+        user.email = emailInput.value.trim();
+        user.status = statusSelect.value;
+        // store back
+        localStorage.setItem("users", JSON.stringify(users));
+        loadUsers();
+        // modal will auto-dismiss due to data-bs-dismiss attribute
+      };
+
+      // show modal
+      new bootstrap.Modal(modalEl).show();
+    }
+
+    function deleteUser(index) {
+      if (!confirm("Are you sure you want to delete this user?")) return;
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      users.splice(index, 1);
+      localStorage.setItem("users", JSON.stringify(users));
+      loadUsers();
+      loadReports(); // reports might reference users
+    }
+
+    // ----------- MOVIES -----------
+    function loadMovies() {
+      const movies = JSON.parse(localStorage.getItem("movies")) || [];
+      const moviesTable = document.getElementById("moviesTable");
+      moviesTable.innerHTML = "";
+
+      movies.forEach((m, i) => {
+        moviesTable.innerHTML += `
+          <tr>
+            <td>${i+1}</td>
+            <td>${m.title}</td>
+            <td><img src="${m.poster || 'https://via.placeholder.com/60'}" class="rounded" width="60" /></td>
+            <td>
+              <button class="btn btn-sm btn-glass" onclick="openEditMovie(${i})">Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteMovie(${i})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("movieCount").textContent = movies.length;
+    }
+
+    function openEditMovie(index) {
+      const movies = JSON.parse(localStorage.getItem("movies")) || [];
+      const movie = movies[index];
+      if (!movie) return;
+
+      const modalEl = document.getElementById("editMovieModal");
+      const textInputs = modalEl.querySelectorAll('input[type="text"]'); // [title, poster]
+      const descArea = modalEl.querySelector('textarea');
+
+      textInputs[0].value = movie.title || "";
+      textInputs[1].value = movie.poster || "";
+      descArea.value = movie.desc || "";
+
+      const saveBtn = modalEl.querySelector('.btn-glass');
+      saveBtn.onclick = function() {
+        movie.title = textInputs[0].value.trim();
+        movie.poster = textInputs[1].value.trim();
+        movie.desc = descArea.value.trim();
+        localStorage.setItem("movies", JSON.stringify(movies));
+        loadMovies();
+      };
+
+      new bootstrap.Modal(modalEl).show();
+    }
+
+    function deleteMovie(index) {
+      if (!confirm("Are you sure you want to delete this movie?")) return;
+      const movies = JSON.parse(localStorage.getItem("movies")) || [];
+      movies.splice(index, 1);
+      localStorage.setItem("movies", JSON.stringify(movies));
+      loadMovies();
+    }
+
+    // ----------- REPORTS -----------
+    function loadReports() {
+      const reports = JSON.parse(localStorage.getItem("reports")) || [];
+      const reportsList = document.getElementById("reportsList");
+      reportsList.innerHTML = "";
+      if (reports.length === 0) {
+        reportsList.innerHTML = "<p>No reports available yet.</p>";
+      } else {
+        reports.forEach((r, i) => {
+          reportsList.innerHTML += `<p><strong>${i+1}.</strong> ${r}</p>`;
+        });
+      }
+      document.getElementById("reportsCount").textContent = reports.length;
+    }
+
+    // ----------- SESSIONS (ACTIVE) -----------
+    function loadSessions() {
+      const sessions = JSON.parse(localStorage.getItem("sessions")) || [];
+      document.getElementById("activeSessions").textContent = sessions.length;
+    }
+
+    // ----------- INIT & LOGOUT -----------
+    function initDashboard() {
+      loadUsers();
+      loadMovies();
+      loadReports();
+      loadSessions();
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("activeUser");
+      window.location.href = "login.html";
+    });
+
+    // initialize
+    initDashboard();
+  </script>
 </body>
 </html>
